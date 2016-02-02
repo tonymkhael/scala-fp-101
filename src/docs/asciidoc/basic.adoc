@@ -44,7 +44,7 @@ even smaller heading text
 even smaller heading text
 ----
 
-== Basic stuff
+== Basics
 
 === Basic formatting
 
@@ -67,8 +67,6 @@ _italic phrase_
 
 [quote]
 Slow motion is like regular motion, but only slower...
-
-icon:tags[] nice-documentation, asciidoctor, fake-or-dumb-quote
 ----
 
 === Bullets
