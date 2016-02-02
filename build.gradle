@@ -106,7 +106,7 @@ task(generateSlides, type: AsciiDoctorDefault){
   dependsOn jrubyPrepareGems
   gemPath jrubyPrepareGems.outputDir
   separateOutputDirs = false
-  outputDir = new File(project.buildDir, '/asciidoc/deck-js')
+  outputDir = new File(project.buildDir, '/asciidoc/reveal-js')
   backends 'html5'
   options template_dirs : [new File(templateDir,'templates/slim').absolutePath ]
   dependsOn download
