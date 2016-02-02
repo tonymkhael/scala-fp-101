@@ -36,22 +36,22 @@ ext {
 task download << {
 	mkdir downloadDir
 	vfs {
-      
+
 options {
         http {
-            proxyHost proxy
-            proxyPort 3128
+            proxyHost System.properties['https.proxyHost']
+            proxyPort System.properties['https.proxyPort']
         }
     }
-      
+
 		cp "zip:https://github.com/asciidoctor/asciidoctor-reveal.js/archive/${asciidoctorBackendVersion}.zip!asciidoctor-reveal.js-${asciidoctorBackendVersion}",
 				templateDir, recursive:true, overwrite:true
 		cp "zip:https://github.com/hakimel/reveal.js/archive/${revealjsVersion}.zip!reveal.js-${revealjsVersion}",
                 revealjsDir, recursive:true, overwrite:true
-                
-      
+
+
 	}
-   
+
 }
 
 download {
@@ -71,16 +71,16 @@ class AsciiDoctorDefault extends org.asciidoctor.gradle.AsciidoctorTask {
         doFirst {
           System.setProperty('jruby.logger.class','org.jruby.util.log.StandardErrorLogger')
         }
-      
+
         resources {
           from(sourceDir) {
             include 'css/**'
             include 'images/**'
           }
         }
-        
+
         requires 'asciidoctor-diagram'
-        
+
         attributes  'build-gradle': new File('build.gradle'),
                         'source-highlighter' : 'highlightjs',
                         'highlightjs-theme' : 'github',
@@ -91,7 +91,7 @@ class AsciiDoctorDefault extends org.asciidoctor.gradle.AsciidoctorTask {
                         'idprefix':'',
                         'idseparator':'-',
                         'docinfo1':'true'
-     }  
+     }
 
 }
 
@@ -102,7 +102,7 @@ task(generateSlides, type: AsciiDoctorDefault){
          include 'reveal.js/**'
        }
      }
-  
+
   dependsOn jrubyPrepareGems
   gemPath jrubyPrepareGems.outputDir
   separateOutputDirs = false
