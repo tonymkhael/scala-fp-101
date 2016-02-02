@@ -1,0 +1,167 @@
+:experimental: true
+:stem: latexmath
+
+== Including a file
+
+[source]
+----
+ include::file_to_include.adoc[] <1>
+----
+<1> Includes a file named file_to_include.adoc in the current one
+
+== A big heading
+
+Some small description for the big heading
+
+[source]
+----
+== A big heading <1>
+
+Some small description for the big heading <2>
+----
+<1> The heading title
+<2> A paragraph within the heading
+
+=== A smaller heading
+
+smaller heading text
+
+[source]
+----
+=== A smaller heading
+
+smaller heading text
+----
+
+==== An even smaller heading
+
+even smaller heading text
+
+[source]
+----
+=== An even smaller heading
+
+even smaller heading text
+----
+
+== Basic stuff
+
+=== Basic formatting
+
+_italic phrase_
+
+*bold phrase*
+
+*_bold italic phrase_*
+
+[quote]
+Slow motion is like regular motion, but only slower...
+
+[source]
+----
+_italic phrase_
+
+*bold phrase*
+
+*_bold italic phrase_*
+
+[quote]
+Slow motion is like regular motion, but only slower...
+
+icon:tags[] nice-documentation, asciidoctor, fake-or-dumb-quote
+----
+
+=== Bullets
+
+* Bla
+* Bli
+* Blu
+
+[source]
+----
+* Bla
+* Bli
+* Blu
+----
+
+=== Lists
+
+. Bla 1
+. Bla 2
+. Bla 3
+
+[source]
+----
+. Bla 1
+. Bla 2
+. Bla 3
+----
+
+===
+
+=== Icons with fontawesome
+
+icon:tags[] tag, icon:money[] money, icon:500px[] 500px
+
+[source]
+----
+icon:tags[] tag, icon:money[] money, icon:500px[] 500px
+----
+
+=== Tips
+
+TIP: AsciiDoctor! http://asciidoctor.org/docs/user-manual/
+
+[source]
+----
+TIP: AsciiDoctor! http://asciidoctor.org/docs/user-manual/x
+----
+
+=== Warning
+
+[WARNING]
+Beware idiot!
+
+[source]
+----
+[WARNING]
+Beware idiot!
+----
+
+=== IMPORTANT
+
+[IMPORTANT]
+Don't do that!
+
+[source]
+----
+[IMPORTANT]
+Don't do that!
+----
+
+=== Tables
+
+|===
+|In words | In digits
+
+|One
+|1
+
+|Ten
+|10
+
+|===
+
+[source]
+----
+|===
+|In words | In digits
+
+|One
+|1
+
+|Ten
+|10
+
+|===
+----
