@@ -9,6 +9,8 @@
 ----
 <1> Includes a file named file_to_include.adoc in the current one
 
+// YES!!! THIS IS A COMMENT IN A DOC
+
 == A big heading
 
 Some small description for the big heading
