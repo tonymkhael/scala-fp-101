@@ -1,0 +1,605 @@
+:experimental: true
+:stem: latexmath
+:source-highlighter: coderay
+
+== Functional Programming
+
+=== Restricted definition
+
+. No mutable variables
+. No assignments
+. No loops
+. .. or any other control structure
+
+=== Wider definition
+
+Functions are 1st class citizens of the language..
+
+They can be:
+
+. Produced (function as return type)
+. Consumed (function as parameter)
+. Composed (f1 o f2)
+
+=== Languages
+
+|===
+|Language | Type
+
+|Haskell
+|Pure
+
+|Pure lisp
+|Pure
+
+|Scala
+|Hybrid
+
+|F#
+|Hybrid
+
+|Clojure
+|Hybrid
+
+|...
+|...
+
+|===
+
+== Why scala?
+
+. Why not?
+. Functional
+. Statically type language
+. Strong type system
+. Consise
+. Object oriented
+. Runs on JVM, or browser (scala-js), or native (scala-native)
+
+=== Substitution model (Call by value)
+
+Given sqr(x) = x * x , sumsqr(x,y) = sqr(x) + sqr(y) 
+
+kbd:[->] sumsqr(3, 2+2)
+
+kbd:[->] sumsqr(3, 4)
+
+kbd:[->] sqr(3) + sqr(4)
+
+kbd:[->] 3 * 3 + sqr(4)
+
+kbd:[->] 9 + sqr(4)
+
+kbd:[->] 9 + 4 * 4
+
+kbd:[->] 9 + 16
+
+kbd:[->] 25
+
+=== Call by name
+
+Given sqr(x) = x * x , sumsqr(x,y) = sqr(x) + sqr(y) 
+
+kbd:[->] sumsqr(3, 2+2)
+
+kbd:[->] sqr(3) + sqr(2 + 2)
+
+kbd:[->] 3 * 3 + sqr(2 + 2)
+
+kbd:[->] 9 + sqr(2 + 2)
+
+kbd:[->] 9 + (2 + 2) * (2 + 2)
+
+kbd:[->] 9 + 4 * (2 + 2)
+
+kbd:[->] 9 + 4 * 4
+
+kbd:[->] 9 + 16
+
+kbd:[->] 25
+
+=== CBV vs CBN (1)
+
+. Both yield same result
+
+.. If they only consist of pure functions (no side effects)
+.. If both evaluations terminate (no infinite loops)
+
+. CBV evaluates an argument only once
+
+. CBN differs argument evaluation until it is used
+
+. If CBV terminates, CBN terminates.
+
+. The opposite is not true
+
+=== CBV vs CBN (2)
+
+first(x, y) = x , loop(x) = loop(x)
+
+CBV: first(x, loop) kbd:[->] first(x, loop) kbd:[->] first(x, loop) kbd:[->] ...
+
+CBN: first(x, loop) kbd:[->] x
+
+def first(x: Int, y: => Int) = x
+
+x is by value parameter, y is by name parameter
+
+=== Conditionals, Def/Val
+
+Conditionals are expressions, not statements
+
+[source, scala]
+----
+val positive = if(x>=0) true else false
+
+def loop = loop
+
+def x = loop // OK, will hang if used
+
+val y = loop // will hang right here
+----
+
+=== Blocks (1)
+
+[source, scala]
+----
+val r = {
+
+  val r = 3 + 3 // <1>
+
+  r * r // <2>
+} // 81
+----
+<1> Last element of a block defines its result
+<2> Definitions inside a block shadow the outside
+
+[source, scala]
+.Functions in functions
+----
+def sumSqr(x, y) = {
+    def sqr(x) = x * x
+    sqr(x) + sqr(y)
+}
+----
+
+=== Tail recursion (1)
+
+When the last statement of a function is calling itself
+kbd:[->] We can reuse the stack frame
+
+[source, scala]
+----
+// GCD by euclid
+@tailrec // no stack overflow, converted to iterative
+def gdc(a, b) = {
+    if(b==0) a
+    else gcd(b, a % b)
+}
+----
+
+=== Tail recursion (2)
+
+[source, scala]
+.Not tail recursive
+----
+def factorial(x) : Int = if(x==0) 1 else x * factorial(x-1)
+// not tail recursive, last action is multiplication
+----
+
+[source, scala]
+.Tail recursive
+----
+def factorial(x) : Int = {
+   def loop(acc: Int, n: Int) : Int = 
+   if(n ==0) acc
+   else loop(acc*n, n-1)
+   
+   loop(1,x)
+}
+----
+
+=== Higher order functions (1)
+
+Functions that take functions as parameters, or returns them as results
+
+[source, scala]
+.Sum from a to b of f(n)
+----
+def intervalSum(f: Int => Int, a: Int, b: Int) : Int = {
+   if(a > b) 0
+   else f(a) + sum(f, a + 1, b)
+}
+
+def sqr(x) = x * x
+def cube(x) = x * x * x
+
+intervalSum(sqr, 0, 2) // 5
+intervalSum(cube, 0, 2) // 9 
+----
+
+=== Higher order functions (2)
+
+Can also return a function from a function
+
+[source, scala]
+.Function as a return type
+----
+def intervalSum(f: Int => Int) : (Int,Int) => Int = {
+   def internal(a: Int, b: Int): Int = {
+     if(a > b) 0
+     else f(a) + intervalSum(f)(a + 1, b)
+   }
+   internal
+}
+
+intervalSum(sqr)(0, 2) // 5
+intervalSum(cube)(0, 2) // 9 
+----
+
+=== Currying
+
+In the same spirit, with more sugar..
+
+[source, scala]
+.Currying
+----
+def intervalSum(f: Int => Int)(a: Int, b: Int) : Int = {
+   if(a > b) 0
+   else f(a) + intervalSum(f)(a + 1, b)
+}
+
+intervalSum(sqr) // (Int, Int) => Int
+intervalSum // (Int => Int) => (Int, Int) => Int
+intervalSum(sqr)(0, 2) // 5
+intervalSum(cube)(0, 2) // 9 
+----
+
+=== Generify interval sum
+
+Instead of sum from a to b, maybe we need product or something else..
+
+[source, scala]
+.Generic map reduce
+----
+def mapReduce(f: Int => Int, combine: (Int, Int) => Int, zero: Int)(a: Int, b: Int) : Int = {
+   if(a > b) zero
+   else combine(f(a), mapReduce(f, combine, zero)(a + 1, b))
+}
+
+def intervalProduct(f: Int => Int)(a: Int, b: Int) = mapReduce(f, (a,b) => a * b, 1)(a, b)
+def intervalSum(f: Int => Int)(a: Int, b: Int) = mapReduce(f, (a,b) => a + b, 0)(a, b)
+
+intervalSum(sqr)(1, 2) // interval sum of squares between 1 & 2
+intervalProduct(sqr)(1, 2) // interval product of squares between 1 & 2
+intervalProduct((n => n))(1, 2) // factorial of 2
+
+----
+
+
+=== Classes (1)
+
+[source, scala]
+----
+class Rational(x: Int, y: Int) { // Primary constructor
+
+   require(y != 0); // Primary constructor evaluates class body
+
+   def this(x: Int) = this(x, 1)
+
+   private def gcd(a: Int, b: Int) = if(b == 0) a else gcd(b, a % b)
+   private val g = gcd(x, y)
+
+   def num = x / g
+
+   def den = y / g
+
+   def add(that:Rational) = 
+   new Rational(num * that.den + den * that.num, den * that.den)
+
+   def + (that:Rational) = add(that) //operator overloading
+
+   def unary_- = new Rational(-num, den) // unary operator overloading
+
+   override def toString = num + "/" + den
+
+}
+
+val r1 = new Rational(2)
+val r2 = new Rational(4)
+r1 add r2 // infix, equivalent to r1.add(r2)
+r1 + r2 // r1.+(r2)
+r1 + (-r2) // r1.+(r2.-())
+
+----
+
+=== Classes (2)
+
+[source, scala]
+----
+package dummy
+abstract class Dummy { 
+
+   def myAbstractFunction : Int // abstract
+
+   def foo : Int = 1
+
+}
+
+class DummyImpl(x: Int) extends Dummy {
+
+  override def foo = x // override behavior
+
+}
+
+object Zero extends Dummy { // Singleton
+
+  override def foo = 0
+
+}
+
+import dummy.{DummyImpl, Dummy}
+import dummy._
+
+val z = Zero
+
+----
+
+=== Type basics
+
+. Any is the base type of all types (==, !=, equals, hashcode, toString)
+. AnyRef <-> java.lang.object
+. AnyVal is the base type of all primitives
+. Nothing is at the bottom of hierarchy, no instance of it
+  . throw ex is of type Nothing
+. Null is a subtype of all types inheriting Object
+
+[source, scala]
+----
+val x = null // OK
+val z : Int = null // does not compile
+val t = if (true) null else false // type is AnyVal
+----
+
+=== Traits
+
+[source, scala]
+----
+package dummy
+trait Speech { // Cannot have parameters
+
+   def speak : String
+   val f = 3
+
+}
+
+class SpeekingDummy(x: Int) extends Dummy with Speech {
+
+  override def speak = "Hello " + f
+
+}
+
+----
+
+=== Companion objects
+
+[source, scala]
+----
+trait List[T] {
+   def isEmpty : Boolean
+   def head : T
+   def tail : List[T]
+}
+
+object List{
+
+   def apply[T](x1: T, x2: T) : List[T] = new Cons(x1, new Cons(x2, new Nil))
+
+}
+
+val l = List(1, 2) // avoiding new operator
+
+----
+
+
+=== Type parameters
+
+[source, scala]
+----
+trait List[T] {
+   def isEmpty : Boolean
+   def head : T
+   def tail : List[T]
+}
+
+class Cons[T](val head: T, val tail: List[T]) extends List[T] { // as if methods are implemented
+   def isEmpty = false
+}
+
+class Nil[T] extends List[T] {
+   def isEmpty = true
+   def head = throw new NoSuchElementException()
+   def tail = throw new NoSuchElementException()
+
+}
+----
+
+=== Type bounds
+
+[source, scala]
+----
+trait List[T] {
+   def isEmpty : Boolean
+   def head : T
+   def tail : List[T]
+}
+
+// S <: T <-> S is a subtype of T (upper bound)
+// S >: T <-> S is a supertype of T (lower bound)
+// S <= T >= Z is dual bounded
+----
+
+if S <: T, is List[S] <: List[T] ? // covariance: subtyping varies with type parameter
+
+=== Variance (1)
+
+If A <: B, everything you can do with B, you should be able to do with A
+
+[source, java]
+----
+class A{}
+
+class B extends A {}
+
+class C extends A {}
+
+B[] bs = new B[]{ new B(), new B() };
+A[] as = bs;
+as[0] = new C(); // throws ArrayStoreException
+B b = bs[0];
+
+----
+
+[source, scala]
+----
+class A{}
+
+class B extends A {}
+
+val bs : Array[B] = Array(new B(), new B())
+val as : Array[A] = bs; // compile error since Arrays in scala are not covariant
+as(0) = new C()
+val b : B = bs(0)
+----
+
+=== Variance (2)
+
+[source]
+----
+if A <: B, and C[T] is parametrized
+Covariance: C[A] <: C[B] // class C[+T] {}
+Contravariance: C[A] >: C[B] // class C[-T] {}
+Non variance: neither C[A] <: C[B] or C[A] >: C[B] // class C[A] {}
+
+As a rule of thumb, mutable types should not be covariant
+----
+
+=== Pattern matching
+
+It's about reversing the constructor..
+
+[source, scala]
+----
+trait Expr
+case class Num(n: Int) extends Expr
+case class Sum(a: Expr, b: Expr) extends Expr
+object Num { def apply(n: Int) = new Num(n)}
+object Sum { def apply(a: Expr, b: Expr) = new Sum(a, b)}
+
+def eval(e: Expr) : Int = e match { // evaluated in order, MatchError thrown if no pattern matches
+   case Num(n) => n
+   case Sum(e1, e2) => eval(e1) + eval(e2)
+}
+
+----
+
+
+=== Lists (1)
+
+[source, scala]
+----
+val l = List(1, 2, 3, 4) // immutable, recursive data structure
+val l = 1 :: 2 :: 3 ::4 :: Nil
+l.head // 1
+l.tail // (2, 3, 4)
+l.length  // 4
+l.last // 4
+l.init // (1, 2, 3)
+l take 2 // (1, 2)
+l drop 2 // (3, 4)
+l(2) // 3
+
+l match {
+case Nil => //Empty
+case x :: Nil => // Of length 1, with x as first
+case 1 :: 2:: xs // A list starting with 1 then 2
+}
+
+----
+
+=== Lists (2)
+
+[source, scala]
+----
+val l1 = List(1, 2)
+val l2 = List(3, 4)
+l1 ++ l2 // (1, 2, 3, 4)
+l1.reverse // (2, 1)
+l1 updated(0, 3) // (3, 2)
+l1 indexOf 1 // 0
+l1 contains 3 // false
+
+l1.map(_ * 2) // (2, 4)
+l1.filter(_ > 1) // (2)
+l1.partition(_<=1) // ( (1), (2) )
+l1.takeWhile(_<=1) // (1)
+l1.dropWhile(_<=1) // (2)
+l1.span(_<=1) // ( (1), (2) )
+l1.reduceLeft(_+_) // 3
+l1.foldLeft(4)(_+_) // 7 same as foldRight if op is associative and commutative
+l1.reduceRight(_-_) // 1
+l1.foldRight(3)(_-_) // -2
+----
+
+=== Other collections
+
+All come with higher order functions..
+
+[source, scala]
+----
+val v = Vector(1, 2, 3) // Random access
+val a = Array(2, 3, 4) // [2, 3, 4]
+val r = 1 to 5 by 2 // Range [1, 3, 5]
+val z = a.zip(v) // ( (1,2), (2,3), (3,4) )
+(v, a) = z.unzip() // (v, a)
+v.flatmap(f) // concatenates f applied to all vs
+v.exists(_>4) // false
+v.forall(_<=3) // true
+----
+
+=== Pairs/Tuples
+
+[source, scala]
+----
+val pair = (1, "two")
+pair match {
+   case (1, _) // Any pair with lhs == 1
+}
+val tuple = (1, "two", 3)
+
+----
+
+=== Maps
+
+[source, scala]
+----
+val digits = Map(1-> "One", 2 -> "Two")
+digits(3) // NoSuchElementException
+digits.get(3) // Optional.None
+digits withDefaultValue 5 // digits.get(3) == 5
+List(1, 2, 3, 4).groupBy(_%2==0) // (true -> (2, 4), false -> (1, 3))
+----
+
+=== For expressions
+
+Not the traditional for loop..
+
+[source, scala]
+----
+for( p <- persons if p.age > 20) yield p.name
+// persons.filter(_.age> 20).map(_.name)
+
+for{i <- 1 until n
+j <- 1 < i
+if(isPrime(i+j)} yield (i, j)
+----

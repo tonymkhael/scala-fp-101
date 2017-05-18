@@ -1,6 +1,6 @@
-= Asciidoctor tutorial
+= Scala & FP
 Tony Mkhael <tony.mkhael@murex.com>
-v1.0, 2016-02-01
+v1.0, 2017-05-17
 :sectnums:
 :toc: left
 :toclevels: 3
@@ -10,6 +10,6 @@ v1.0, 2016-02-01
 :stylesdir: css
 :iconfont-cdn: https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css
 
-include::basic.adoc[]
+include::101.adoc[]
 
-include::cool.adoc[]
+//include::102.adoc[]

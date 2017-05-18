@@ -16,7 +16,7 @@ plugins {
 }
 
 project.version = '1.0-SNAPSHOT'
-project.group = 'com.murex'
+project.group = 'org.tmkhael'
 project.description = 'scala-fp-101'
 
 dependencies {
