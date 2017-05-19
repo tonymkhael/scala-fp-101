@@ -19,12 +19,6 @@ project.version = '1.0-SNAPSHOT'
 project.group = 'org.tmkhael'
 project.description = 'scala-fp-101'
 
-dependencies {
-    gems 'rubygems:haml:4.0.6'
-    gems 'rubygems:slim:3.0.6'
-    gems 'rubygems:thread_safe:0.3.5'
-}
-
 asciidoctorj {
     version = '1.5.4'
 }
@@ -57,6 +51,26 @@ apply plugin: 'com.github.jruby-gradle.base'
 apply plugin: 'org.ysb33r.vfs'
 apply plugin: 'java'
 apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'scala'
+
+dependencies {
+    gems 'rubygems:haml:4.0.6'
+    gems 'rubygems:slim:3.0.6'
+    gems 'rubygems:thread_safe:0.3.5'
+    compile 'org.scala-lang:scala-library:2.12.2'
+    testCompile 'org.scalatest:scalatest_2.12:3.0.1'
+    testCompile 'org.scalactic:scalactic_2.12:3.0.1'
+    testCompile 'org.scalacheck:scalacheck_2.12:1.13.5'
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: $descriptor")
+    }
+
+}
 
 asciidoctor {
     dependsOn jrubyPrepare, download

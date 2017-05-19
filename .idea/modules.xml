@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/scala-fp-101.iml" filepath="$PROJECT_DIR$/scala-fp-101.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scala-fp-101_main.iml" filepath="$PROJECT_DIR$/.idea/modules/scala-fp-101_main.iml" group="scala-fp-101" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scala-fp-101_test.iml" filepath="$PROJECT_DIR$/.idea/modules/scala-fp-101_test.iml" group="scala-fp-101" />
+    </modules>
+  </component>
+</project>
