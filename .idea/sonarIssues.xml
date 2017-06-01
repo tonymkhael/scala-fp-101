@@ -18,7 +18,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/main/scala/murex/xva/DateSchedule.scala">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/main/scala/murex/xva/Diffusion.scala">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/scala/murex/xva/DiffusionMatrix.scala">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/scala/murex/xva/Matrix.scala">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/scala/murex/xva/ScalarDiffusion.scala">
           <value>
             <set />
           </value>
@@ -29,6 +49,16 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/test/scala/murex/xva/DiffusionTest.scala">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/test/resources/application.conf">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/test/scala/murex/xva/DBTest.scala">
           <value>
             <set />
           </value>
